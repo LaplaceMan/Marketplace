@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from 'ethers';
 
-import { contractABI, contractAddress, networks } from '../utils/constants';
+import { networks } from '../utils/constants';
 
 export const WalletContext = React.createContext();
 
