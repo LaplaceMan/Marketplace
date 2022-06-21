@@ -1,14 +1,10 @@
-import { useContext, useEffect, useState } from "react";
-import { MarketplaceContext } from "../context/MarketplaceContext";
 import NFTCard from './NFT/NFTCard';
 import CollectionCard from "./Collection/CollectionCard";
 import { Select } from 'antd';
 import { AiOutlineCaretDown } from 'react-icons/ai';
 import { nfts, collections } from './Items';
 const { Option } = Select;
-const NftSection = ({ allCollections }) => {
-  const [nftList, setNftList] = useState();
-  const { fetchNFTs } = useContext(MarketplaceContext);
+const NftSection = () => {
   const SortBy = () => {
     return (
         <div className="flex justify-between items-center">
@@ -27,10 +23,6 @@ const NftSection = ({ allCollections }) => {
     </div>
     );
   }
-  useEffect(async () => {
-    const data = await fetchNFTs();
-    setNftList(data);
-  }, []);
 
   return (
       <div className="flex w-full flex-col mt-5 mb-10 items-center">
