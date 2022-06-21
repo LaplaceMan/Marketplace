@@ -5,7 +5,6 @@ import Home from './components/Home';
 import ProfileSection from './components/ProfileSection/profileSection';
 import Create from './components/Create/Create';
 import { WalletProvider } from './context/WalletContext';
-import { MarketplaceProvider } from './context/MarketplaceContext';
 import SingleCollection from './components/Collection/Singlecollection';
 import Marketplace from './components/Marketplace';
 
@@ -15,7 +14,6 @@ const App = () => {
   return (
     <Router>
       <WalletProvider>
-        <MarketplaceProvider>
           <div className="min-h-screen gradient-bg-welcome">
             <Anchor>
               <Navbar />
@@ -31,7 +29,6 @@ const App = () => {
             </Routes>
             <Footer />
           </div>
-        </MarketplaceProvider>
       </WalletProvider>
     </Router>
   )
