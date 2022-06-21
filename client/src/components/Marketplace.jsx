@@ -38,16 +38,16 @@ const Marketplace = () => {
                     <AiOutlineCaretDown color='#fff' fontSize={20} style={{marginRight: '10px'}}/>
                 </div>        
                 <div className="md:flex sm:hidden">                       
-                    <div className={`flex px-5 h-[38px] mr-2 items-center justify-center text-white font-bold rounded-full cursor-pointer ${!radioState.all ? 'bg-[#0f0e13]': 'eBApMP'}`} onClick={()=> setRadioState({all: true})}>
+                    <div className={`flex px-5 h-[38px] mr-2 items-center justify-center text-white font-bold rounded-full cursor-pointer ${!radioState.all ? 'bg-[#2b2836]': 'eBApMP'}`} onClick={()=> setRadioState({all: true})}>
                         全部
                     </div>
-                    <div className={`flex px-5 h-[38px] mr-2 items-center justify-center text-white font-bold rounded-full cursor-pointer ${!radioState.avatar ? 'bg-[#0f0e13]': 'eBApMP'}`} onClick={()=> setRadioState({avatar: true})}>
+                    <div className={`flex px-5 h-[38px] mr-2 items-center justify-center text-white font-bold rounded-full cursor-pointer ${!radioState.avatar ? 'bg-[#2b2836]': 'eBApMP'}`} onClick={()=> setRadioState({avatar: true})}>
                         头像
                     </div>
-                    <div className={`flex px-5 h-[38px] mr-2 items-center justify-center text-white font-bold rounded-full cursor-pointer ${!radioState.cover ? 'bg-[#0f0e13]': 'eBApMP'}`} onClick={()=> setRadioState({cover: true})}>
+                    <div className={`flex px-5 h-[38px] mr-2 items-center justify-center text-white font-bold rounded-full cursor-pointer ${!radioState.cover ? 'bg-[#2b2836]': 'eBApMP'}`} onClick={()=> setRadioState({cover: true})}>
                         封面
                     </div>
-                    <div className={`flex px-5 h-[38px] items-center justify-center text-white font-bold rounded-full cursor-pointer ${!radioState.background ? 'bg-[#0f0e13]': 'eBApMP'}`} onClick={()=> setRadioState({background: true})}>
+                    <div className={`flex px-5 h-[38px] items-center justify-center text-white font-bold rounded-full cursor-pointer ${!radioState.background ? 'bg-[#2b2836]': 'eBApMP'}`} onClick={()=> setRadioState({background: true})}>
                         背景
                     </div>    
                 </div>

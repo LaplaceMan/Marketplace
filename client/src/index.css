@@ -17,8 +17,8 @@ body {
   background-color: #0f0e13;
   background-image:
     radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 0) 0, transparent 50%),
-    radial-gradient(at 50% 45%, hsla(225, 39%, 35%, 1) 0, transparent 50%),
-    radial-gradient(at 50% 55%, hsla(339, 49%, 35%, 1) 0, transparent 50%);
+    radial-gradient(at 50% 45%, hsla(225, 45%, 30%, 1) 0, transparent 50%),
+    radial-gradient(at 50% 55%, hsla(339, 45%, 30%, 1) 0, transparent 50%);
 }
 
 .gradient-bg-nabar {
@@ -27,13 +27,6 @@ body {
     radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
     /* radial-gradient(at 0% 100%, hsla(225, 39%, 35%, 1) 0, transparent 50%), */
     radial-gradient(at 0% 0%, hsla(339, 49%, 35%, 0) 0, transparent 50%);
-}
-
-.gradient-bg-footer {
-  background-color: #0f0e13;
-  background-image:
-    radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 0) 0, transparent 53%),
-    radial-gradient(at 50% 0%, hsla(339, 49%, 35%, 1) 0, transparent 50%);
 }
 
 .blue-glassmorphism {
@@ -53,23 +46,6 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.eth-card {
-  background-color: #a099ff;
-  background-image:
-    radial-gradient(at 83% 67%, rgb(152, 231, 156) 0, transparent 58%),
-    radial-gradient(at 67% 20%, hsla(357, 94%, 71%, 1) 0, transparent 59%),
-    radial-gradient(at 88% 35%, hsla(222, 81%, 65%, 1) 0, transparent 50%),
-    radial-gradient(at 31% 91%, hsla(9, 61%, 61%, 1) 0, transparent 52%),
-    radial-gradient(at 27% 71%, hsla(336, 91%, 65%, 1) 0, transparent 49%),
-    radial-gradient(at 74% 89%, hsla(30, 98%, 65%, 1) 0, transparent 51%),
-    radial-gradient(at 53% 75%, hsla(174, 94%, 68%, 1) 0, transparent 45%);
-}
-
-/* .yg {
-  filter: brightness(110%);
-  box-shadow: 0 0 50px #272d4c;
-} */
-
 .nft {
   backdrop-filter: blur(8px);
   backdrop-filter: brightness(100%);
@@ -80,6 +56,11 @@ body {
   backdrop-filter: blur(8px);
   backdrop-filter: brightness(100%);
   /* box-shadow: 5px 5px 20px #324373; */
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background-image: url("../images/date.png");
+  cursor: pointer;
 }
 
 @tailwind base;
@@ -311,4 +292,8 @@ img {
   text-align: center;
   align-items: center;
   font-size: 16px;
+}
+
+.ant-anchor-ink::before {
+  width: 0 !important;
 }

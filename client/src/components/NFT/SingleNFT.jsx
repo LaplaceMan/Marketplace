@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Image, Collapse, Statistic, Table } from 'antd';
+import { Image, Collapse, Statistic, Table, Tag } from 'antd';
 import { MdVerified, MdShare, MdSubject, MdOutlineSell, MdStackedLineChart, MdTransferWithinAStation } from 'react-icons/md';
 import { AiFillEye, AiFillHeart } from 'react-icons/ai';
-import { txColumns, txData } from '../utils/constants';
+import { txColumns, txData } from '../../utils/constants';
 import { Area } from '@ant-design/plots';
 const { Panel } = Collapse;
 const { Countdown } = Statistic;
@@ -63,10 +63,14 @@ const SingleNFT = () => {
                         <div className='m-[10px] text-[#696969]'>
                             杀手GF是一个由前Riot Games艺术家Zeronis创作的7777个生成性肖像艺术集, 有超过240个精心设计的特征, 对比了可爱和有美感的女友, 而这些女友也恰好是危险的刺客。
                         </div>
-                        <div className='flex w-full justify-center'>
-                            <div className='flex items-center h-[25px] w-[170px] bg-[#2952e3] rounded-full text-white justify-center mr-[20px]'>创作者:<div className='ml-[10px]'>0x374...589</div></div>
-                            <div className='flex items-center h-[25px] w-[170px] bg-[#2952e3] rounded-full text-white justify-center ml-[20px]'>持有者:<div className='ml-[10px]'>0x374...589</div></div>
-                            </div>    
+                        <div className='flex w-full ml-[10px]'>
+                            {/* <div className='flex items-center h-[25px] w-[150px] border border-[#B0C4DE] bg-[#f0f5ff] rounded-sm text-[#2952e3] justify-center mr-[10px]'>创作者:<div className='ml-[10px]'>0x374...589</div></div>
+                            <div className='flex items-center h-[25px] w-[150px] border border-[#2952e3] bg-[#f0f5ff] rounded-sm text-[#2952e3] justify-center'>持有者:<div className='ml-[10px]'>0x374...589</div></div> */}
+                            <Tag color="magenta">ERC-721</Tag>
+                            <Tag color="volcano">头像</Tag>
+                            <Tag color="orange">持有者: 0x374...589</Tag>    
+                            <Tag color="cyan">艺术家: 0x374...589</Tag>
+                        </div>
                     </div>
                     <div className='flex flex-col mt-[15px] border rounded-md h-[130px]'>
                         <div className='bg-[#fafafa] border-b h-[35px] flex p-2 items-center rounded-t-md text-[#696969]'>

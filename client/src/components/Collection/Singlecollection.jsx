@@ -1,10 +1,10 @@
 import classNames from "classnames";
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import NFTCard from "./NFT/NFTCard";
+import NFTCard from "../NFT/NFTCard";
 import { Divider } from 'antd';
 import { BiStoreAlt } from 'react-icons/bi';
-import { nfts } from './Items';
+import { nfts } from '../Items';
 const SingleCollection = () => {
 
   const { collectionId } = useParams();

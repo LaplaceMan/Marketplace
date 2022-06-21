@@ -1,192 +1,183 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import "../node_modules/@openzeppelin/contracts/utils/Counters.sol";
-import "../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "../node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract NFTMarketplace is ERC721URIStorage {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
-    Counters.Counter private _itemsUpForSale;
-    Counters.Counter private _itemsSold;
-    Counters.Counter public collectionsCount;
+// import "./ERC721Token.sol";
+// import "./ERC1155Token.sol";
+import "./plugin/utils/Ownable.sol";
+import "./plugin/ERC721/IERC721.sol";
+import "./plugin/ERC1155/IERC1155.sol";
 
-    address payable owner;
+contract NFTMarketplace is Ownable {
+    uint256 public coCount;
+    // 标准类型, 0为ERC721, 1为ERC1155.
+    mapping(address => uint8) public Protocol;
+    mapping(uint256 => address) public Address;
+    mapping(address => mapping(uint256 => Listing721)) ListingERC721;
+    mapping(address => mapping(address => mapping(uint256 => Listing1155))) ListingERC1155;
 
-    mapping(uint256 => MarketItem) private idToMarketItem;
-    mapping(uint256 => uint256[]) private collection;
-    mapping(uint256 => string) public collectionName;
+    constructor() Ownable(msg.sender) {}
 
-    struct MarketItem {
-        uint256 tokenId;
-        address payable seller;
-        address payable owner;
+    struct Listing721 {
         uint256 price;
-        bool sold;
+        address seller;
     }
 
-    event MarketItemCreated(
-        uint256 indexed tokenId,
-        address seller,
-        address owner,
-        uint256 price,
-        bool sold
-    );
-
-    constructor() ERC721("NFT Dungeon", "NFTD") {
-        owner = payable(msg.sender);
+    struct Listing1155 {
+        uint256 price;
+        uint256 number;
     }
 
-    function createCollection(string memory name) public {
-        collectionsCount.increment();
-        uint256 currentCount = collectionsCount.current();
+    // function createERC721Collection(
+    //     string memory name_,
+    //     string memory symbol_,
+    //     string memory baseUri_,
+    //     uint256 supply_,
+    //     uint256 limit,
+    //     uint256 price_,
+    //     uint256 time
+    // ) public {
+    //     coCount++;
+    //     ERC721Token newCollection = new ERC721Token(
+    //         name_,
+    //         symbol_,
+    //         baseUri_,
+    //         supply_,
+    //         limit,
+    //         price_,
+    //         time
+    //     );
+    //     Protocol[address(newCollection)] = 0;
+    //     Address[coCount] = address(newCollection);
+    // }
 
-        collectionName[currentCount] = name;
+    // function createERC1155Collection(
+    //     string memory uri_,
+    //     string memory name_,
+    //     string memory symbol_,
+    //     uint256[] memory supply_,
+    //     uint256[] memory limit_,
+    //     uint256[] memory price_
+    // ) public {
+    //     coCount++;
+    //     ERC1155Token newCollection = new ERC1155Token(
+    //         uri_,
+    //         name_,
+    //         symbol_,
+    //         supply_,
+    //         limit_,
+    //         price_
+    //     );
+    //     Protocol[address(newCollection)] = 1;
+    //     Address[coCount] = address(newCollection);
+    // }
+
+    function listERC721Item(
+        address nftAddress,
+        uint256 tokenId,
+        uint256 price
+    ) external {
+        IERC721 nft = IERC721(nftAddress);
+        address owner = nft.ownerOf(tokenId);
+        require(msg.sender == owner);
+        require(ListingERC721[nftAddress][tokenId].seller == address(0));
+        require(nft.getApproved(tokenId) == address(this));
+        ListingERC721[nftAddress][tokenId] = Listing721(price, msg.sender);
     }
 
-    function addToCollection(uint256 tokenID, uint256 collectionID) public {
-        collection[collectionID].push(tokenID);
-    }
-
-    function readFromCollection(uint256 collectionID, uint256 num)
-        public
-        returns (uint256)
-    {
-        return collection[collectionID][num];
-    }
-
-    /* Mints a token and lists it in the marketplace */
-    function createToken(string memory tokenURI, uint256 price)
-        public
-        returns (uint256)
-    {
-        _tokenIds.increment();
-        uint256 newTokenId = _tokenIds.current();
-
-        _mint(msg.sender, newTokenId);
-        _setTokenURI(newTokenId, tokenURI);
-        return newTokenId;
-    }
-
-    function createMarketItem(uint256 tokenId, uint256 price) public {
-        require(price > 0, "Price must be at least 1 wei");
-
-        _itemsUpForSale.increment();
-
-        idToMarketItem[tokenId] = MarketItem(
-            tokenId,
-            payable(msg.sender),
-            payable(address(this)),
-            price,
-            false
+    function listERC1155Item(
+        address nftAddress,
+        uint256 tokenId,
+        uint256 number,
+        uint256 price
+    ) external {
+        IERC1155 nft = IERC1155(nftAddress);
+        uint256 balance = nft.balanceOf(msg.sender, tokenId);
+        require(
+            ListingERC1155[nftAddress][msg.sender][tokenId].number + number <=
+                balance
         );
+        require(nft.isApprovedForAll(msg.sender, address(this)));
+        ListingERC1155[nftAddress][msg.sender][tokenId].price = price;
+        ListingERC1155[nftAddress][msg.sender][tokenId].number += number;
+    }
 
-        _transfer(msg.sender, address(this), tokenId);
-        emit MarketItemCreated(
-            tokenId,
+    function cancelListERC721Item(address nftAddress, uint256 tokenId)
+        external
+    {
+        require(ListingERC721[nftAddress][tokenId].seller == msg.sender);
+        delete (ListingERC721[nftAddress][tokenId]);
+    }
+
+    function cancelListERC1155Item(
+        address nftAddress,
+        uint256 tokenId,
+        uint256 number
+    ) external {
+        ListingERC1155[nftAddress][msg.sender][tokenId].number -= number;
+    }
+
+    function updateListERC721Item(
+        address nftAddress,
+        uint256 tokenId,
+        uint256 newPrice
+    ) external {
+        require(msg.sender == ListingERC721[nftAddress][tokenId].seller);
+        require(newPrice > 0);
+        ListingERC721[nftAddress][tokenId].price = newPrice;
+    }
+
+    function updateListERC1155Item(
+        address nftAddress,
+        uint256 tokenId,
+        uint256 newPrice,
+        uint256 newNumber
+    ) external {
+        IERC1155 nft = IERC1155(nftAddress);
+        uint256 balance = nft.balanceOf(msg.sender, tokenId);
+        require(newNumber <= balance);
+        require(newPrice > 0);
+        ListingERC1155[nftAddress][msg.sender][tokenId] = Listing1155(
+            newPrice,
+            newNumber
+        );
+    }
+
+    function buyERC721Item(address nftAddress, uint256 tokenId)
+        external
+        payable
+    {
+        address seller = ListingERC721[nftAddress][tokenId].seller;
+        require(seller != address(0));
+        require(msg.value == ListingERC721[nftAddress][tokenId].price);
+        payable(seller).transfer((msg.value * 97) / 100);
+        IERC721(nftAddress).safeTransferFrom(seller, msg.sender, tokenId);
+        delete ListingERC721[nftAddress][tokenId];
+    }
+
+    function buyERC1155Item(
+        address nftAddress,
+        uint256 tokenId,
+        address from,
+        uint256 number
+    ) external payable {
+        require(ListingERC1155[nftAddress][from][tokenId].number >= number);
+        require(
+            ListingERC1155[nftAddress][from][tokenId].price * number ==
+                msg.value
+        );
+        payable(from).transfer((msg.value * 97) / 100);
+        IERC1155(nftAddress).safeTransferFrom(
+            from,
             msg.sender,
-            address(this),
-            price,
-            false
+            tokenId,
+            number,
+            ""
         );
+        ListingERC1155[nftAddress][from][tokenId].number -= number;
     }
 
-    /* allows someone to resell a token they have purchased */
-    function resellToken(uint256 tokenId, uint256 price) public payable {
-        require(
-            idToMarketItem[tokenId].owner == msg.sender,
-            "Only item owner can perform this operation"
-        );
-        idToMarketItem[tokenId].sold = false;
-        idToMarketItem[tokenId].price = price;
-        idToMarketItem[tokenId].seller = payable(msg.sender);
-        idToMarketItem[tokenId].owner = payable(address(this));
-        _itemsSold.decrement();
-        _itemsUpForSale.increment();
-
-        _transfer(msg.sender, address(this), tokenId);
-    }
-
-    /* Creates the sale of a marketplace item */
-    /* Transfers ownership of the item, as well as funds between parties */
-    function createMarketSale(uint256 tokenId) public payable {
-        uint256 price = idToMarketItem[tokenId].price;
-        require(
-            msg.value == price,
-            "Please submit the asking price in order to complete the purchase"
-        );
-        idToMarketItem[tokenId].owner = payable(msg.sender);
-        idToMarketItem[tokenId].sold = true;
-        idToMarketItem[tokenId].seller = payable(address(0));
-        _itemsSold.increment();
-        _transfer(address(this), msg.sender, tokenId);
-        payable(idToMarketItem[tokenId].seller).transfer(msg.value);
-    }
-
-    /* Returns all unsold market items */
-    function fetchMarketItems() public view returns (MarketItem[] memory) {
-        uint256 itemCount = _itemsUpForSale.current();
-        uint256 unsoldItemCount = _itemsUpForSale.current() -
-            _itemsSold.current();
-        uint256 currentIndex = 0;
-
-        MarketItem[] memory items = new MarketItem[](unsoldItemCount);
-        for (uint256 i = 0; i < itemCount; i++) {
-            if (idToMarketItem[i + 1].owner == address(this)) {
-                uint256 currentId = i + 1;
-                MarketItem storage currentItem = idToMarketItem[currentId];
-                items[currentIndex] = currentItem;
-                currentIndex += 1;
-            }
-        }
-        return items;
-    }
-
-    /* Returns only items that a user has purchased */
-    function fetchMyNFTs() public view returns (MarketItem[] memory) {
-        uint256 totalItemCount = _itemsUpForSale.current();
-        uint256 itemCount = 0;
-        uint256 currentIndex = 0;
-
-        for (uint256 i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].owner == msg.sender) {
-                itemCount += 1;
-            }
-        }
-
-        MarketItem[] memory items = new MarketItem[](itemCount);
-        for (uint256 i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].owner == msg.sender) {
-                uint256 currentId = i + 1;
-                MarketItem storage currentItem = idToMarketItem[currentId];
-                items[currentIndex] = currentItem;
-                currentIndex += 1;
-            }
-        }
-        return items;
-    }
-
-    /* Returns only items a user has listed */
-    function fetchItemsListed() public view returns (MarketItem[] memory) {
-        uint256 totalItemCount = _itemsUpForSale.current();
-        uint256 itemCount = 0;
-        uint256 currentIndex = 0;
-
-        for (uint256 i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].seller == msg.sender) {
-                itemCount += 1;
-            }
-        }
-
-        MarketItem[] memory items = new MarketItem[](itemCount);
-        for (uint256 i = 0; i < totalItemCount; i++) {
-            if (idToMarketItem[i + 1].seller == msg.sender) {
-                uint256 currentId = i + 1;
-                MarketItem storage currentItem = idToMarketItem[currentId];
-                items[currentIndex] = currentItem;
-                currentIndex += 1;
-            }
-        }
-        return items;
+    function withdraw() public onlyOwner {
+        uint256 balance = address(this).balance;
+        payable(msg.sender).transfer(balance);
     }
 }

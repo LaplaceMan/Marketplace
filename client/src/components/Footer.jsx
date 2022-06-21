@@ -10,7 +10,7 @@ const Footer = () => {
                 </div>
                 <div className='flex justify-center items-center md:mt-0 mt-5'>
                     <div className='text-white text-base text-center mx-2 cursor-pointer'>浏览市场</div>
-                    <div className='text-white text-base text-center mx-2 cursor-pointer'>社区</div>
+                    <div className='text-white text-base text-center mx-2 cursor-pointer'>铸造</div>
                     <div className='text-white text-base text-center mx-2 cursor-pointer'>元宇宙文创</div>
                 </div>
             </div>
