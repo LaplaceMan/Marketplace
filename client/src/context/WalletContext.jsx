@@ -11,7 +11,7 @@ const { ethereum } = window;
 export const WalletProvider = ({ children }) => {
 
     const [currentAccount, setCurrentAccount] = useState('');
-    const [isChainValid, setIsChainValid] = useState(false);
+//     const [isChainValid, setIsChainValid] = useState(false);
 
     const addWalletListener = () => {
         if (window.ethereum) {
@@ -61,47 +61,47 @@ export const WalletProvider = ({ children }) => {
         console.log(currentAccount);
     };
 
-    const changeNetwork = async () => {
-        try {
-            if (!ethereum) return alert("Please install Metamask");
-            console.log(networks);
-            await window.ethereum.request({
-                method: "wallet_addEthereumChain",
-                params: [{
-                    chainId: networks.mumbai_testnet.chainId,
-                    chainName: networks.mumbai_testnet.chainName,
-                    rpcUrls: networks.mumbai_testnet.rpcUrls
-                }]
-            });
+//     const changeNetwork = async () => {
+//         try {
+//             if (!ethereum) return alert("Please install Metamask");
+//             console.log(networks);
+//             await window.ethereum.request({
+//                 method: "wallet_addEthereumChain",
+//                 params: [{
+//                     chainId: networks.mumbai_testnet.chainId,
+//                     chainName: networks.mumbai_testnet.chainName,
+//                     rpcUrls: networks.mumbai_testnet.rpcUrls
+//                 }]
+//             });
 
-            setIsChainValid(true);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+//             setIsChainValid(true);
+//         } catch (error) {
+//             console.log(error);
+//         }
+//     };
 
 
     useEffect(() => {
         checkIfWalletIsConnected();
         addWalletListener();
-        const networkId = window.ethereum.networkVersion;
-        const chainValid = parseInt(networkId) === networks.mumbai_testnet.networkId ? true : false;
+//         const networkId = window.ethereum.networkVersion;
+//         const chainValid = parseInt(networkId) === networks.mumbai_testnet.networkId ? true : false;
 
-        setIsChainValid(chainValid);
+//         setIsChainValid(chainValid);
 
-        window.ethereum.on("chainChanged", (chainId) => {
-            console.log("netowrk changed", chainId);
+//         window.ethereum.on("chainChanged", (chainId) => {
+//             console.log("netowrk changed", chainId);
             
-            const networkId = window.ethereum.networkVersion;
-            const chainValid = parseInt(networkId) === networks.mumbai_testnet.networkId ? true : false;
+//             const networkId = window.ethereum.networkVersion;
+//             const chainValid = parseInt(networkId) === networks.mumbai_testnet.networkId ? true : false;
 
-            setIsChainValid(chainValid);
-        });
+//             setIsChainValid(chainValid);
+//         });
     }, []);
 
 
     return (
-        <WalletContext.Provider value={{ connectWallet, currentAccount, isChainValid, changeNetwork }}>
+        <WalletContext.Provider value={{ connectWallet, currentAccount }}>
             {children}
         </WalletContext.Provider>
     )
